@@ -24,13 +24,13 @@ export class AuthorizationGuard implements CanActivate {
     const req = httpContext.getRequest();
     const res = httpContext.getResponse();
 
-    const checkJwt = promisify(
+    const checkJWT = promisify(
       jwt({
         secret: expressJwtSecret({
           cache: true,
           rateLimit: true,
           jwksRequestsPerMinute: 5,
-          jwksUri: `${this.AUTH0_DOMAIN}/.well-known/jwks.json`,
+          jwksUri: `${this.AUTH0_DOMAIN}.well-known/jwks.json`,
         }),
         audience: this.AUTH0_AUDIENCE,
         issuer: this.AUTH0_DOMAIN,
@@ -39,9 +39,9 @@ export class AuthorizationGuard implements CanActivate {
     );
 
     try {
-      await checkJwt(req, res);
+      await checkJWT(req, res);
       return true;
-    } catch (algorithms) {
+    } catch {
       throw new UnauthorizedException();
     }
   }
